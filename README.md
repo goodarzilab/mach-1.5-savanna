@@ -1,8 +1,6 @@
-<div align="center">
-    <h1>Mach-1.5 (Savanna-based)</h1>
-</div>
+# mach-1.5-savanna
 
-This is the development repository for **Mach-1.5**, built on top of the [Savanna](https://github.com/brianhie/savanna) pretraining framework.
+**Mach-1.5 Savanna-based** | This is the development repository for **Mach-1.5**, built on top of the [Savanna](https://github.com/brianhie/savanna) pretraining framework.
 
 It is based on Savanna commit [`247e8e59`](https://github.com/brianhie/savanna/commit/247e8e59b7065da20974bdb01939a01a85c14d62).
 
@@ -12,10 +10,8 @@ Reference genome and annotation preprocessing scripts are maintained separately 
 
 
 ---
+## Savanna
 
-<div align="center">
-    <h2>Savanna</h2>
-</div>
 
 Pretraining infrastructure for research and application of [convolutional multi-hybrid models](paper.pdf) (StripedHyena 2).
 
