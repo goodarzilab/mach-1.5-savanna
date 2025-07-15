@@ -1,0 +1,183 @@
+save: mach/checkpoints/v00-100m-r1
+
+# Training
+train-iters: 65536 # 11e12 / (8192 * 256 * 8) 
+lr-decay-iters: 65536
+eval-interval: 1024 ## number of iterations between evaluations
+eval-iters: 128 ## number of batches of validation data to evaluate on
+log-interval: 128 ## number of iterations between logging
+steps_per_print: 128 ## number of iterations between printing
+wall_clock_breakdown: false
+optimizer:
+  type: Adam
+  params:
+    lr: 0.005
+    betas: [0.9, 0.95]
+    eps: 1.0e-8
+min_lr: 0.00003
+weight-decay: 0.0001
+lr-decay-style: cosine
+warmup: 0.05
+
+# Checkpointing
+checkpoint-factor: 1024
+save_retain_interval: 512
+keep-last-n-checkpoints: 16
+  
+#IMPORTANT: needed to stabilize training at 1k+ gpus
+# recycle_events: true
+# disable_gc: true
+# gc_collect_generation: 2
+# prealloc_mem: false
+
+# Logging
+use_wandb: true
+print_mem_alloc_stats: false
+log_memory_stats: false
+log_memory_alloc_counts: false
+
+# MP / PP config
+pipe_parallel_size: 0
+model_parallel_size: 2
+context_parallel_size: 1
+sequence_parallel: false
+
+zero_optimization:
+  stage: 3
+  prefetch_bucket_size: 500000000
+  max_live_parameters: 1000000000
+  allgather_partitions: true
+  allgather_bucket_size: 500000000
+  overlap_comm: true
+  reduce_scatter: true
+  reduce_bucket_size: 500000000
+  contiguous_gradients: true
+  cpu_offload: false
+  param_persistence_threshold: 0
+
+# Batch sizing
+train_micro_batch_size_per_gpu: 7
+gradient_accumulation_steps: 1
+
+# Activation checkpointing
+checkpoint-activations: true
+checkpoint-num-layers: 4
+
+#Checkpointing
+zero_use_leaf_modules: false
+zero_leaf_modules: ["ParallelSequenceMixer", "ParallelGLU"]
+
+zero_use_mics: false
+make_vocab_size_divisible_by: 8
+num_layers: 32
+hidden_size: 512
+num_attention_heads: 32
+num_groups_hyena: 512
+num_groups_hyena_medium: 64
+num_groups_hyena_short: 64
+num_groups_hyena_mlp: 64
+operator-config:
+  - [['hyena_se'], 1]
+  - [['hyena_mr'], 1]
+  - [['hyena'], 1]
+  - [['flash_v2'], 1]
+  - [['hyena_se'], 1]
+  - [['hyena_mr'], 1]
+  - [['hyena'], 1]
+  - [['hyena_se'], 1]
+  - [['hyena_mr'], 1]
+  - [['hyena'], 1]
+  - [['flash_v2'], 1]
+  - [['hyena_se'], 1]
+  - [['hyena_mr'], 1]
+  - [['hyena'], 1]
+  - [['hyena_se'], 1]
+  - [['hyena_mr'], 1]
+  - [['hyena'], 1]
+  - [['flash_v2'], 1]
+  - [['hyena_se'], 1]
+  - [['hyena_mr'], 1]
+  - [['hyena'], 1]
+  - [['hyena_se'], 1]
+  - [['hyena_mr'], 1]
+  - [['hyena'], 1]
+  - [['flash_v2'], 1]
+  - [['hyena_se'], 1]
+  - [['hyena_mr'], 1]
+  - [['hyena'], 1]
+  - [['hyena_se'], 1]
+  - [['hyena_mr'], 1]
+  - [['hyena'], 1]
+  - [['flash_v2'], 1]
+
+# These kernels will be also autotuned and activated
+use_cgcg: false
+use_cgcg_short: false
+use_cgcg_mlp: false
+
+# Tune to target sequence length e.g., 65536
+seq_length: 65536
+max_position_embeddings: 65536
+
+hyena_mr_len: 128 # default is null
+log_attn_norms: false
+pos_emb: rotary
+rotary_emb_base: 1000000
+rotary_pct: 1
+prenorm: true
+postnorm: false
+pre_mlp_norm: true
+outer_mlp_norm: false
+no_weight_tying: false
+gpt_j_residual: false
+normalize_hyena_filters: false
+short-conv-L: 3
+hyena_filter_fast_decay: 0.3
+hyena_filter_slow_decay: 1.2
+hyena_filter_w: 14
+hyena_filter_cls: implicit_modal
+hyena_medium_filter_cls: explicit_single_decay
+explicit_filter_decay_preset: weak
+hyena_filter_order: 16
+hyena_filter_wd: 0.0
+use_fast_heads: false
+use_slow_heads: false
+use-hyena-filter: true
+output_layer_parallelism: column
+bias_dropout_fusion: false
+norm: rmsnorm
+rms_norm_epsilon: 1.0e-6
+identity_mlp: false
+activation: gelu
+mlp_type: llama
+scaled-upper-triang-masked-softmax-fusion: true
+bias-gelu-fusion: false
+init_method: small_init
+output_layer_init_method: wang_init
+
+data-impl: mmap
+
+partition-activations: false
+synchronize-each-layer: false
+gradient_clipping: 1.0
+hidden-dropout: 0.0
+attention-dropout: 0.0
+precision: bfloat16
+bf16:
+  enabled: true
+distributed-backend: nccl
+
+tokenizer_type: CharLevelTokenizer
+use_fp8_input_projections: true
+use_fp8_output_projections: true
+use_fp8_mlp_projections: true
+use_fp8_norm: true
+checkpoint_strict_load: false
+make_gated_mlp_multiple_of: 128
+materialize_attn_mask: false # default false, to save memory
+fast_conv_proj: true
+hyena_se_len: 7
+pretraining_strategy: AR
+# to_upper: null
+mask_loss_control_tags: false
+lowercase_loss_reweighting: 1
